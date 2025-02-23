@@ -1,6 +1,9 @@
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 const scoreEl = document.querySelector("#scoreEl");
+const startGameBtn = document.querySelector("#startGameBtn");
+const modalEl = document.querySelector("#modalEl");
+const bigScoreEl = document.querySelector("#bigScoreEl");
 
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -173,6 +176,8 @@ function animate() {
 
     if (dist - enemy.radius - player.radius < 0) {
       window.cancelAnimationFrame(animationId);
+      bigScoreEl.innerHTML = score;
+      modalEl.style.display = "flex";
     }
 
     projectiles.forEach((projectile, projectileIndex) => {
@@ -229,5 +234,8 @@ window.addEventListener("click", (event) => {
   projectiles.push(new Projectile(centerX, centerY, 5, "white", velocity));
 });
 
-animate();
-spawnEnemies();
+startGameBtn.addEventListener("click", () => {
+  modalEl.style.display = "none";
+  animate();
+  spawnEnemies();
+});
