@@ -14,6 +14,10 @@ const friction = 0.97;
 
 let animationId;
 let score = 0;
+let player;
+let projectiles;
+let enemies;
+let particles;
 
 class Player {
   constructor(x, y, radius, color) {
@@ -106,11 +110,6 @@ class Particle {
     this.alpha -= 0.005;
   }
 }
-
-const player = new Player(centerX, centerY, 30, "white");
-const projectiles = [];
-const enemies = [];
-const particles = [];
 
 function spawnEnemies() {
   setInterval(() => {
@@ -224,6 +223,16 @@ function animate() {
   });
 }
 
+function init() {
+  score = 0;
+  scoreEl.innerHTML = score;
+  bigScoreEl.innerHTML = score;
+  player = new Player(centerX, centerY, 30, "white");
+  projectiles = [];
+  enemies = [];
+  particles = [];
+}
+
 window.addEventListener("click", (event) => {
   const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
   const velocity = {
@@ -236,6 +245,7 @@ window.addEventListener("click", (event) => {
 
 startGameBtn.addEventListener("click", () => {
   modalEl.style.display = "none";
+  init();
   animate();
   spawnEnemies();
 });
