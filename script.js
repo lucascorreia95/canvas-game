@@ -7,6 +7,8 @@ canvas.height = innerHeight;
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 
+let animationId;
+
 class Player {
   constructor(x, y, radius, color) {
     this.x = x;
@@ -100,7 +102,7 @@ function spawnEnemies() {
 }
 
 function animate() {
-  window.requestAnimationFrame(animate);
+  animationId = window.requestAnimationFrame(animate);
 
   c.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -112,6 +114,12 @@ function animate() {
 
   enemies.forEach((enemy, index) => {
     enemy.update();
+
+    const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+
+    if (dist - enemy.radius - player.radius < 0) {
+      window.cancelAnimationFrame(animationId);
+    }
 
     projectiles.forEach((projectile, projectileIndex) => {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
