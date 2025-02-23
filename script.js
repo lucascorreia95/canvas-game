@@ -1,5 +1,6 @@
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
+const scoreEl = document.querySelector("#scoreEl");
 
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -9,6 +10,7 @@ const centerY = canvas.height / 2;
 const friction = 0.97;
 
 let animationId;
+let score = 0;
 
 class Player {
   constructor(x, y, radius, color) {
@@ -193,6 +195,9 @@ function animate() {
         }
 
         if (enemy.radius - 10 > 10) {
+          score += 100;
+          scoreEl.innerHTML = score;
+
           gsap.to(enemy, {
             radius: enemy.radius - 10,
           });
@@ -201,6 +206,9 @@ function animate() {
             projectiles.splice(projectileIndex, 1);
           }, 0);
         } else {
+          score += 250;
+          scoreEl.innerHTML = score;
+
           setTimeout(() => {
             enemies.splice(index, 1);
             projectiles.splice(projectileIndex, 1);
