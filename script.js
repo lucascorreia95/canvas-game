@@ -4,8 +4,8 @@ const c = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-const x = canvas.width / 2;
-const y = canvas.height / 2;
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
 
 class Player {
   constructor(x, y, radius, color) {
@@ -46,8 +46,58 @@ class Projectile {
   }
 }
 
-const player = new Player(x, y, 30, "blue");
+class Enemy {
+  constructor(x, y, radius, color, velocity) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+    this.velocity = velocity;
+  }
+
+  draw() {
+    c.beginPath();
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    c.fillStyle = this.color;
+    c.fill();
+  }
+
+  update() {
+    this.draw();
+    this.x = this.x + this.velocity.x;
+    this.y = this.y + this.velocity.y;
+  }
+}
+
+const player = new Player(centerX, centerY, 30, "blue");
 const projectiles = [];
+const enemies = [];
+
+function spawnEnemies() {
+  setInterval(() => {
+    let x;
+    let y;
+
+    const radius = Math.random() * (30 - 4) + 4;
+    const color = "green";
+
+    if (Math.random() < 0.5) {
+      x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+      y = Math.random() * canvas.height;
+    } else {
+      x = Math.random() * canvas.width;
+      y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+    }
+
+    const angle = Math.atan2(centerY - y, centerX - x);
+    const velocity = {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    };
+
+    enemies.push(new Enemy(x, y, radius, color, velocity));
+  }, 1000);
+}
 
 function animate() {
   window.requestAnimationFrame(animate);
@@ -55,19 +105,25 @@ function animate() {
   c.clearRect(0, 0, canvas.width, canvas.height);
 
   player.draw();
+
   projectiles.forEach((projectile) => {
     projectile.update();
+  });
+
+  enemies.forEach((enemy) => {
+    enemy.update();
   });
 }
 
 window.addEventListener("click", (event) => {
-  const angle = Math.atan2(event.clientY - y, event.clientX - x);
+  const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
   const velocity = {
     x: Math.cos(angle),
     y: Math.sin(angle),
   };
 
-  projectiles.push(new Projectile(x, y, 5, "red", velocity));
+  projectiles.push(new Projectile(centerX, centerY, 5, "red", velocity));
 });
 
 animate();
+spawnEnemies();
